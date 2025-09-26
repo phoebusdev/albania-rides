@@ -1,0 +1,678 @@
+openapi: 3.0.0
+info:
+  title: AlbaniaRides API
+  description: Ridesharing platform API for connecting drivers and passengers in Albania
+  version: 1.0.0
+  contact:
+    name: AlbaniaRides Support
+    email: support@albaniarides.com
+
+servers:
+  - url: https://api.albaniarides.com/v1
+    description: Production server
+  - url: http://localhost:3000/api
+    description: Development server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+        phone:
+          type: string
+          pattern: '^\+355[0-9]{8,9}$'
+        city:
+          type: string
+        photo_url:
+          type: string
+          format: uri
+        bio:
+          type: string
+          maxLength: 500
+        is_driver:
+          type: boolean
+        car_model:
+          type: string
+        car_color:
+          type: string
+        driving_years:
+          type: integer
+          minimum: 0
+        rating:
+          type: number
+          minimum: 1
+          maximum: 5
+        total_rides:
+          type: integer
+        member_since:
+          type: string
+          format: date-time
+
+    Ride:
+      type: object
+      required:
+        - origin_city
+        - destination_city
+        - departure_time
+        - seats_total
+        - price_per_seat
+        - pickup_point
+      properties:
+        id:
+          type: string
+          format: uuid
+        driver:
+          $ref: '#/components/schemas/UserSummary'
+        origin_city:
+          type: string
+          enum: [Tirana, Durrës, Vlorë, Shkodër, Elbasan, Fier, Korçë, Berat, Lushnjë, Kavajë, Pogradec, Gjirokastër, Sarandë, Laç, Kukës]
+        destination_city:
+          type: string
+          enum: [Tirana, Durrës, Vlorë, Shkodër, Elbasan, Fier, Korçë, Berat, Lushnjë, Kavajë, Pogradec, Gjirokastër, Sarandë, Laç, Kukës]
+        pickup_point:
+          type: string
+        departure_time:
+          type: string
+          format: date-time
+        seats_total:
+          type: integer
+          minimum: 1
+          maximum: 4
+        seats_available:
+          type: integer
+          minimum: 0
+          maximum: 4
+        price_per_seat:
+          type: number
+          minimum: 0
+        stops:
+          type: array
+          items:
+            type: string
+        luggage_space:
+          type: boolean
+        smoking_allowed:
+          type: boolean
+        is_recurring:
+          type: boolean
+        recurrence_pattern:
+          type: string
+          enum: [daily, weekly]
+        status:
+          type: string
+          enum: [active, completed, cancelled]
+
+    Booking:
+      type: object
+      required:
+        - ride_id
+        - seats_booked
+      properties:
+        id:
+          type: string
+          format: uuid
+        ride_id:
+          type: string
+          format: uuid
+        passenger:
+          $ref: '#/components/schemas/UserSummary'
+        seats_booked:
+          type: integer
+          minimum: 1
+          maximum: 4
+        total_price:
+          type: number
+        pickup_point:
+          type: string
+        passenger_message:
+          type: string
+          maxLength: 500
+        status:
+          type: string
+          enum: [confirmed, cancelled, completed]
+        created_at:
+          type: string
+          format: date-time
+
+    Rating:
+      type: object
+      required:
+        - stars
+      properties:
+        id:
+          type: string
+          format: uuid
+        stars:
+          type: integer
+          minimum: 1
+          maximum: 5
+        comment:
+          type: string
+          maxLength: 500
+
+    Message:
+      type: object
+      required:
+        - content
+      properties:
+        id:
+          type: string
+          format: uuid
+        content:
+          type: string
+          maxLength: 1000
+        is_quick_message:
+          type: boolean
+        sender_id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        read_at:
+          type: string
+          format: date-time
+
+    UserSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        photo_url:
+          type: string
+          format: uri
+        rating:
+          type: number
+        total_rides:
+          type: integer
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        code:
+          type: string
+
+paths:
+  /auth/register:
+    post:
+      summary: Register new user
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone
+                - name
+                - city
+              properties:
+                phone:
+                  type: string
+                  pattern: '^\+355[0-9]{8,9}$'
+                name:
+                  type: string
+                city:
+                  type: string
+      responses:
+        '201':
+          description: Registration successful, SMS sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  verification_required:
+                    type: boolean
+        '400':
+          description: Invalid input
+        '409':
+          description: Phone number already registered
+
+  /auth/verify:
+    post:
+      summary: Verify phone number with OTP
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone
+                - otp
+              properties:
+                phone:
+                  type: string
+                otp:
+                  type: string
+      responses:
+        '200':
+          description: Verification successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid OTP
+        '404':
+          description: Phone number not found
+
+  /auth/login:
+    post:
+      summary: Login with phone number
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone
+              properties:
+                phone:
+                  type: string
+                  pattern: '^\+355[0-9]{8,9}$'
+      responses:
+        '200':
+          description: SMS sent
+        '404':
+          description: User not found
+
+  /rides:
+    get:
+      summary: Search for rides
+      tags: [Rides]
+      parameters:
+        - name: origin
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: destination
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: time_period
+          in: query
+          schema:
+            type: string
+            enum: [morning, afternoon, evening]
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [departure, price, rating]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 20
+      responses:
+        '200':
+          description: List of rides
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  rides:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Ride'
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  pages:
+                    type: integer
+
+    post:
+      summary: Create a new ride
+      tags: [Rides]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ride'
+      responses:
+        '201':
+          description: Ride created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ride'
+        '401':
+          description: Unauthorized
+        '400':
+          description: Invalid input
+
+  /rides/{rideId}:
+    get:
+      summary: Get ride details
+      tags: [Rides]
+      parameters:
+        - name: rideId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Ride details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ride'
+        '404':
+          description: Ride not found
+
+    put:
+      summary: Update ride
+      tags: [Rides]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: rideId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ride'
+      responses:
+        '200':
+          description: Ride updated
+        '401':
+          description: Unauthorized
+        '403':
+          description: Not ride owner
+        '404':
+          description: Ride not found
+
+    delete:
+      summary: Cancel ride
+      tags: [Rides]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: rideId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Ride cancelled
+        '401':
+          description: Unauthorized
+        '403':
+          description: Not ride owner
+
+  /bookings:
+    get:
+      summary: Get user's bookings
+      tags: [Bookings]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: role
+          in: query
+          schema:
+            type: string
+            enum: [passenger, driver]
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [upcoming, completed, cancelled]
+      responses:
+        '200':
+          description: List of bookings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Booking'
+
+    post:
+      summary: Create booking
+      tags: [Bookings]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ride_id
+                - seats_booked
+              properties:
+                ride_id:
+                  type: string
+                  format: uuid
+                seats_booked:
+                  type: integer
+                passenger_message:
+                  type: string
+      responses:
+        '201':
+          description: Booking created, SMS sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '400':
+          description: Not enough seats available
+        '401':
+          description: Unauthorized
+        '409':
+          description: Already booked this ride
+
+  /bookings/{bookingId}:
+    delete:
+      summary: Cancel booking
+      tags: [Bookings]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: bookingId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Booking cancelled
+        '400':
+          description: Too late to cancel (within 2 hours)
+        '401':
+          description: Unauthorized
+        '404':
+          description: Booking not found
+
+  /ratings:
+    post:
+      summary: Submit rating
+      tags: [Ratings]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ride_id
+                - stars
+              properties:
+                ride_id:
+                  type: string
+                  format: uuid
+                stars:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                comment:
+                  type: string
+                  maxLength: 500
+      responses:
+        '201':
+          description: Rating submitted
+        '400':
+          description: Invalid rating or ride not completed
+        '401':
+          description: Unauthorized
+        '409':
+          description: Already rated
+
+  /messages:
+    get:
+      summary: Get messages for booking
+      tags: [Messages]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: booking_id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+
+    post:
+      summary: Send message
+      tags: [Messages]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - booking_id
+                - content
+              properties:
+                booking_id:
+                  type: string
+                content:
+                  type: string
+                is_quick_message:
+                  type: boolean
+      responses:
+        '201':
+          description: Message sent
+        '401':
+          description: Unauthorized
+        '403':
+          description: Not part of this booking
+
+  /users/profile:
+    get:
+      summary: Get current user profile
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+    put:
+      summary: Update profile
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                city:
+                  type: string
+                bio:
+                  type: string
+                car_model:
+                  type: string
+                car_color:
+                  type: string
+                driving_years:
+                  type: integer
+      responses:
+        '200':
+          description: Profile updated
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
