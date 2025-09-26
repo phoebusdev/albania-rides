@@ -9,9 +9,6 @@ const nextConfig = {
       },
     ],
   },
-  experimental: {
-    serverActions: true,
-  },
 };
 
 // PWA configuration (optional - will work without next-pwa installed)
