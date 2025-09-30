@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getUserIdFromRequest } from '@/lib/utils/jwt'
 import { getTimePeriod } from '@/lib/utils/validation'
 
 export async function GET(request: NextRequest) {
@@ -141,8 +142,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // TODO: Extract user ID from JWT token
-    const driver_id = 'user-id-from-token'
+    const userId = await getUserIdFromRequest(authHeader)
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const driver_id = userId
 
     const supabase = createClient()
     const { data: ride, error } = await supabase
