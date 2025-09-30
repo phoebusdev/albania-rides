@@ -44,22 +44,25 @@ export default function RegisterPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-info-50 flex items-center justify-center px-4">
         <div className="max-w-md w-full">
-          <div className="card text-center">
+          <div className="card shadow-lift text-center">
             <div className="mb-6">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">✉️</span>
+              <div className="w-20 h-20 bg-gradient-to-br from-success-100 to-success-200 rounded-full flex items-center justify-center mx-auto mb-4 shadow-soft">
+                <span className="text-4xl">✉️</span>
               </div>
-              <h1 className="text-2xl font-bold mb-2">Check Your Email</h1>
+              <h1 className="text-3xl font-bold mb-3 text-gray-900">Check Your Email</h1>
               <p className="text-gray-600">
-                We sent a magic link to <strong>{formData.email}</strong>
+                We sent a magic link to <strong className="text-primary-600">{formData.email}</strong>
               </p>
             </div>
 
-            <div className="bg-blue-50 p-4 rounded-lg text-sm text-left mb-6">
-              <p className="font-semibold mb-2">Next steps:</p>
-              <ol className="list-decimal list-inside space-y-1 text-gray-700">
+            <div className="bg-info-50 border border-info-200 p-5 rounded-lg text-sm text-left mb-6">
+              <p className="font-semibold mb-3 text-info-900 flex items-center gap-2">
+                <span className="text-lg">📋</span>
+                Next steps:
+              </p>
+              <ol className="list-decimal list-inside space-y-2 text-gray-700">
                 <li>Open your email inbox</li>
                 <li>Click the magic link in the email</li>
                 <li>You'll be automatically logged in</li>
@@ -70,7 +73,7 @@ export default function RegisterPage() {
               Didn't receive the email? Check your spam folder or{' '}
               <button
                 onClick={() => setSuccess(false)}
-                className="text-primary-600 hover:underline"
+                className="text-primary-600 hover:underline font-semibold"
               >
                 try again
               </button>
@@ -82,19 +85,26 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="max-w-md w-full">
-        <div className="card">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-info-50 flex items-center justify-center px-4 py-12">
+      {/* Decorative Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-5">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary-500 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-info-500 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="relative max-w-md w-full">
+        <div className="card shadow-lift">
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold">Create Account</h1>
-            <p className="text-gray-600 mt-2">
-              Join AlbaniaRides to share rides across Albania
+            <h1 className="text-2xl font-bold text-primary-600 mb-3">AlbaniaRides</h1>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h2>
+            <p className="text-gray-600">
+              Join thousands sharing rides across Albania
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Email Address
               </label>
               <input
@@ -108,19 +118,21 @@ export default function RegisterPage() {
                 className="input"
                 required
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
+                <span>🔐</span>
                 We'll send you a magic link to login
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Full Name
               </label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="John Doe"
                 className="input"
                 minLength={2}
                 maxLength={100}
@@ -129,7 +141,7 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 City of Residence
               </label>
               <select
@@ -148,38 +160,49 @@ export default function RegisterPage() {
             </div>
 
             {error && (
-              <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
-                {error}
+              <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-r flex items-center gap-2">
+                <span className="text-lg">⚠️</span>
+                <span className="text-sm">{error}</span>
               </div>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full"
+              className="btn-primary w-full py-3 text-base font-semibold"
             >
-              {loading ? 'Creating Account...' : 'Continue'}
+              {loading ? '⏳ Creating Account...' : '🚀 Create Account'}
             </button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-gray-600">
-              Already have an account?{' '}
+          <div className="mt-8">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-4 bg-white text-gray-500 font-medium">
+                  Already have an account?
+                </span>
+              </div>
+            </div>
+
+            <div className="mt-6">
               <button
                 onClick={() => router.push('/login')}
-                className="text-primary-600 hover:underline"
+                className="w-full btn-secondary py-3 font-semibold"
               >
                 Login
               </button>
-            </p>
+            </div>
           </div>
         </div>
 
-        <div className="mt-4 text-center text-sm text-gray-500">
+        <p className="mt-6 text-center text-xs text-gray-500">
           By registering, you agree to our{' '}
-          <a href="/terms" className="underline">Terms</a> and{' '}
-          <a href="/privacy" className="underline">Privacy Policy</a>
-        </div>
+          <a href="/terms" className="link-hover font-medium">Terms</a> and{' '}
+          <a href="/privacy" className="link-hover font-medium">Privacy Policy</a>
+        </p>
       </div>
     </div>
   )

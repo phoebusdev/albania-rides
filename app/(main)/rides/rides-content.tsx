@@ -102,34 +102,69 @@ export default function RidesContent() {
         </div>
 
         {loading && (
-          <div className="text-center py-12">
-            <p className="text-gray-600">Searching for rides...</p>
+          <div className="space-y-5">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="card">
+                <div className="flex gap-5 animate-pulse">
+                  <div className="skeleton w-20 h-20 rounded-full"></div>
+                  <div className="flex-grow space-y-3">
+                    <div className="flex justify-between">
+                      <div className="space-y-2">
+                        <div className="skeleton h-5 w-32 rounded"></div>
+                        <div className="skeleton h-4 w-24 rounded"></div>
+                      </div>
+                      <div className="skeleton h-10 w-24 rounded-lg"></div>
+                    </div>
+                    <div className="skeleton h-px w-full"></div>
+                    <div className="space-y-2">
+                      <div className="skeleton h-4 w-48 rounded"></div>
+                      <div className="skeleton h-4 w-36 rounded"></div>
+                      <div className="skeleton h-4 w-28 rounded"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
         {error && (
-          <div className="bg-red-50 text-red-600 p-4 rounded-lg">
-            {error}
+          <div className="card border-l-4 border-red-500 bg-red-50">
+            <div className="flex items-center gap-3">
+              <span className="text-3xl">⚠️</span>
+              <div>
+                <p className="font-semibold text-red-900 mb-1">Error Loading Rides</p>
+                <p className="text-sm text-red-700">{error}</p>
+              </div>
+            </div>
           </div>
         )}
 
         {!loading && !error && rides.length === 0 && (
-          <div className="card text-center py-12">
-            <p className="text-gray-600 mb-4">No rides found for this route.</p>
-            <a href="/" className="btn-secondary inline-block">
-              Search Again
-            </a>
+          <div className="card text-center py-16">
+            <div className="max-w-sm mx-auto">
+              <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-6 shadow-soft">
+                <span className="text-5xl">🔍</span>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">No Rides Found</h3>
+              <p className="text-gray-600 mb-8 leading-relaxed">
+                We couldn't find any rides for this route. Try adjusting your search or check back later.
+              </p>
+              <a href="/" className="btn-primary inline-flex items-center gap-2 px-6 py-3">
+                🔍 Search Again
+              </a>
+            </div>
           </div>
         )}
 
         {!loading && !error && rides.length > 0 && (
-          <div className="space-y-4">
+          <div className="space-y-5">
             {rides.map((ride) => (
-              <div key={ride.id} className="card hover:shadow-md transition-shadow">
-                <div className="flex gap-4">
+              <div key={ride.id} className="card-hover">
+                <div className="flex gap-5">
                   {/* Driver Photo */}
                   <div className="flex-shrink-0">
-                    <div className="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center">
+                    <div className="w-20 h-20 bg-gradient-to-br from-primary-100 to-primary-200 rounded-full flex items-center justify-center ring-2 ring-white shadow-soft">
                       {ride.driver.photo_url ? (
                         <img
                           src={ride.driver.photo_url}
@@ -137,53 +172,61 @@ export default function RidesContent() {
                           className="w-full h-full rounded-full object-cover"
                         />
                       ) : (
-                        <span className="text-2xl text-gray-500">👤</span>
+                        <span className="text-3xl text-gray-500">👤</span>
                       )}
                     </div>
                   </div>
 
                   {/* Ride Details */}
                   <div className="flex-grow">
-                    <div className="flex justify-between items-start mb-2">
+                    <div className="flex justify-between items-start mb-3">
                       <div>
-                        <h3 className="font-semibold">{ride.driver.name}</h3>
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <span>⭐ {ride.driver.rating.toFixed(1)}</span>
-                          <span>•</span>
-                          <span>{ride.driver.total_rides} rides</span>
+                        <h3 className="text-lg font-bold text-gray-900">{ride.driver.name}</h3>
+                        <div className="flex items-center gap-3 text-sm">
+                          <span className="flex items-center gap-1 text-warning-600 font-semibold">
+                            {'⭐'.repeat(Math.round(ride.driver.rating))}
+                            <span className="text-gray-600 ml-1">{ride.driver.rating.toFixed(1)}</span>
+                          </span>
+                          <span className="text-gray-400">•</span>
+                          <span className="text-gray-600">{ride.driver.total_rides} trips</span>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-xl font-bold text-primary-600">
-                          {formatCurrency(ride.price_per_seat)}
+                        <div className="inline-flex items-baseline bg-primary-600 text-white px-4 py-2 rounded-lg shadow-soft">
+                          <span className="text-2xl font-bold">{formatCurrency(ride.price_per_seat)}</span>
                         </div>
-                        <div className="text-xs text-gray-500">per seat</div>
+                        <div className="text-xs text-gray-500 mt-1">per seat</div>
                       </div>
                     </div>
 
-                    <div className="space-y-1 text-sm">
-                      <div className="flex gap-2">
-                        <span>📅</span>
-                        <span>{formatDate(ride.departure_time)}</span>
-                        <span>•</span>
-                        <span>{formatTime(ride.departure_time)}</span>
+                    <div className="border-t border-gray-100 pt-3 mb-3"></div>
+
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center gap-2 text-gray-700">
+                        <span className="text-lg">📅</span>
+                        <span className="font-medium">{formatDate(ride.departure_time)}</span>
+                        <span className="text-gray-400">•</span>
+                        <span className="font-medium">{formatTime(ride.departure_time)}</span>
                       </div>
-                      <div className="flex gap-2">
-                        <span>📍</span>
+                      <div className="flex items-center gap-2 text-gray-700">
+                        <span className="text-lg">📍</span>
                         <span>{ride.pickup_point}</span>
                       </div>
-                      <div className="flex gap-2">
-                        <span>💺</span>
-                        <span>{ride.seats_available} seats available</span>
+                      <div className="flex items-center gap-2 text-gray-700">
+                        <span className="text-lg">💺</span>
+                        <span className="font-medium">{ride.seats_available} seats available</span>
                       </div>
                     </div>
 
-                    <div className="mt-3 flex gap-2">
-                      <button className="btn-primary">
+                    <div className="border-t border-gray-100 mt-4 pt-4"></div>
+
+                    <div className="flex items-center gap-3">
+                      <button className="btn-primary flex-1 md:flex-initial md:px-8 py-3 text-base font-semibold">
                         Book Now
                       </button>
-                      <div className="text-sm text-gray-500 flex items-center">
-                        💵 Cash payment only
+                      <div className="flex items-center gap-2 bg-warning-50 border border-warning-200 px-3 py-2 rounded-lg">
+                        <span className="text-lg">💵</span>
+                        <span className="text-xs font-medium text-warning-800">Cash only</span>
                       </div>
                     </div>
                   </div>

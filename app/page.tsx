@@ -53,22 +53,31 @@ export default function HomePage() {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-primary-50 to-white py-12 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+      <section className="relative bg-gradient-to-br from-primary-50 via-primary-100/30 to-white py-16 px-4 overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-10 left-10 w-32 h-32 bg-primary-600 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 right-10 w-40 h-40 bg-primary-500 rounded-full blur-3xl"></div>
+        </div>
+
+        <div className="relative max-w-4xl mx-auto text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
             Travel Together Across Albania
-          </h2>
-          <p className="text-lg text-gray-600 mb-8">
-            Connect with drivers and passengers for intercity travel.
-            <span className="font-semibold"> Cash payment only.</span>
+          </h1>
+          <p className="text-xl md:text-2xl text-gray-700 mb-3 max-w-2xl mx-auto">
+            Connect with drivers and passengers for intercity travel
           </p>
+          <div className="inline-flex items-center gap-2 bg-warning-100 border border-warning-200 px-4 py-2 rounded-lg mb-10">
+            <span className="text-2xl">💵</span>
+            <span className="text-sm font-semibold text-warning-800">Cash payment only - Pay driver directly</span>
+          </div>
 
           {/* Search Form */}
-          <form onSubmit={handleSearch} className="card max-w-2xl mx-auto">
-            <div className="space-y-4">
+          <form onSubmit={handleSearch} className="card max-w-2xl mx-auto shadow-lift">
+            <div className="space-y-5">
               <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                <div className="text-left">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
                     From
                   </label>
                   <select
@@ -86,8 +95,8 @@ export default function HomePage() {
                   </select>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                <div className="text-left">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
                     To
                   </label>
                   <select
@@ -106,8 +115,8 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+              <div className="text-left">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Date (optional)
                 </label>
                 <input
@@ -119,8 +128,8 @@ export default function HomePage() {
                 />
               </div>
 
-              <button type="submit" className="btn-primary w-full">
-                Search Rides
+              <button type="submit" className="btn-primary w-full text-lg py-3 font-semibold">
+                🔍 Search Rides
               </button>
             </div>
           </form>
@@ -128,21 +137,35 @@ export default function HomePage() {
       </section>
 
       {/* Popular Routes */}
-      <section className="py-12 px-4">
+      <section className="py-16 px-4 bg-gray-50">
         <div className="max-w-4xl mx-auto">
-          <h3 className="text-2xl font-bold mb-6">Popular Routes</h3>
+          <h2 className="text-3xl font-bold mb-8 text-center">Popular Routes</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {POPULAR_ROUTES.map((route) => (
               <button
                 key={`${route.from}-${route.to}`}
                 onClick={() => handleQuickRoute(route.from, route.to)}
-                className="card hover:shadow-md transition-shadow text-left"
+                className="card-hover text-left group"
               >
-                <div className="font-semibold">
-                  {route.fromName} → {route.toName}
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-semibold text-lg text-gray-900">
+                    {route.fromName}
+                  </span>
+                  <span className="text-primary-500 transform group-hover:translate-x-1 transition-transform duration-150">
+                    →
+                  </span>
+                  <span className="font-semibold text-lg text-gray-900">
+                    {route.toName}
+                  </span>
                 </div>
-                <div className="text-sm text-gray-600">
-                  {route.distance} km • ~{route.duration} min
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <span className="flex items-center gap-1">
+                    🛣️ {route.distance} km
+                  </span>
+                  <span>•</span>
+                  <span className="flex items-center gap-1">
+                    ⏱️ ~{route.duration} min
+                  </span>
                 </div>
               </button>
             ))}
@@ -151,37 +174,52 @@ export default function HomePage() {
       </section>
 
       {/* Features */}
-      <section className="bg-white py-12 px-4">
+      <section className="bg-white py-16 px-4">
         <div className="max-w-4xl mx-auto">
-          <h3 className="text-2xl font-bold mb-8 text-center">How It Works</h3>
+          <h2 className="text-3xl font-bold mb-12 text-center">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🔍</span>
+            <div className="text-center group">
+              <div className="relative inline-block mb-6">
+                <div className="w-20 h-20 bg-gradient-to-br from-info-100 to-info-200 rounded-full flex items-center justify-center mx-auto shadow-soft group-hover:shadow-lift transition-all duration-150">
+                  <span className="text-3xl">🔍</span>
+                </div>
+                <div className="absolute -top-1 -right-1 w-8 h-8 bg-info-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                  1
+                </div>
               </div>
-              <h4 className="font-semibold mb-2">Search Rides</h4>
-              <p className="text-gray-600">
-                Find available rides between Albanian cities
+              <h3 className="text-xl font-semibold mb-3 text-gray-900">Search Rides</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Find available rides between Albanian cities with dates and prices
               </p>
             </div>
 
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">📱</span>
+            <div className="text-center group">
+              <div className="relative inline-block mb-6">
+                <div className="w-20 h-20 bg-gradient-to-br from-success-100 to-success-200 rounded-full flex items-center justify-center mx-auto shadow-soft group-hover:shadow-lift transition-all duration-150">
+                  <span className="text-3xl">📱</span>
+                </div>
+                <div className="absolute -top-1 -right-1 w-8 h-8 bg-success-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                  2
+                </div>
               </div>
-              <h4 className="font-semibold mb-2">Book Instantly</h4>
-              <p className="text-gray-600">
-                Reserve your seat and get driver contact
+              <h3 className="text-xl font-semibold mb-3 text-gray-900">Book Instantly</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Reserve your seat and get driver contact information
               </p>
             </div>
 
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">💵</span>
+            <div className="text-center group">
+              <div className="relative inline-block mb-6">
+                <div className="w-20 h-20 bg-gradient-to-br from-warning-100 to-warning-200 rounded-full flex items-center justify-center mx-auto shadow-soft group-hover:shadow-lift transition-all duration-150">
+                  <span className="text-3xl">💵</span>
+                </div>
+                <div className="absolute -top-1 -right-1 w-8 h-8 bg-warning-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                  3
+                </div>
               </div>
-              <h4 className="font-semibold mb-2">Pay in Cash</h4>
-              <p className="text-gray-600">
-                Pay the driver directly when you meet
+              <h3 className="text-xl font-semibold mb-3 text-gray-900">Pay in Cash</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Pay the driver directly when you meet - simple and secure
               </p>
             </div>
           </div>
@@ -189,14 +227,31 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-8 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="mb-4">© 2024 AlbaniaRides. Connection platform only.</p>
-          <div className="flex justify-center gap-6">
-            <a href="/faq" className="hover:underline">FAQ</a>
-            <a href="/safety" className="hover:underline">Safety Tips</a>
-            <a href="/terms" className="hover:underline">Terms</a>
-            <a href="/privacy" className="hover:underline">Privacy</a>
+      <footer className="bg-gray-900 text-white py-12 px-4 border-t-4 border-primary-600">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-8">
+            <h3 className="text-2xl font-bold text-white mb-2">AlbaniaRides</h3>
+            <p className="text-gray-400 text-sm">Connection platform for ridesharing across Albania</p>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-6 mb-8">
+            <a href="/faq" className="text-gray-300 hover:text-white hover:underline underline-offset-4 transition-colors duration-150">
+              FAQ
+            </a>
+            <a href="/safety" className="text-gray-300 hover:text-white hover:underline underline-offset-4 transition-colors duration-150">
+              Safety Tips
+            </a>
+            <a href="/terms" className="text-gray-300 hover:text-white hover:underline underline-offset-4 transition-colors duration-150">
+              Terms
+            </a>
+            <a href="/privacy" className="text-gray-300 hover:text-white hover:underline underline-offset-4 transition-colors duration-150">
+              Privacy
+            </a>
+          </div>
+
+          <div className="text-center text-gray-400 text-sm border-t border-gray-800 pt-6">
+            <p>© 2024 AlbaniaRides. Platform for rideshare connections only.</p>
+            <p className="mt-2 text-xs">We are not responsible for actual rides or cash transactions.</p>
           </div>
         </div>
       </footer>

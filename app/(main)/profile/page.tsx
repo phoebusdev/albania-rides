@@ -124,47 +124,74 @@ export default function ProfilePage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 py-10">
       <div className="max-w-2xl mx-auto px-4">
-        <h1 className="text-3xl font-bold mb-8">My Profile</h1>
+        <h1 className="text-4xl font-bold mb-10 text-gray-900">My Profile</h1>
 
-        <Card className="mb-6">
-          <div className="p-6">
-            <div className="flex items-center gap-6">
-              <div className="w-20 h-20 rounded-full bg-red-600 flex items-center justify-center">
-                <span className="text-white font-semibold text-3xl">
-                  {formData.name.charAt(0)}
-                </span>
+        <Card className="mb-8 shadow-lift">
+          <div className="p-8">
+            <div className="flex items-center gap-8 mb-6">
+              <div className="relative">
+                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center ring-4 ring-white shadow-lift">
+                  <span className="text-white font-bold text-4xl">
+                    {formData.name.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-success-500 rounded-full border-4 border-white"></div>
               </div>
-              <div>
-                <h2 className="text-2xl font-bold">{formData.name}</h2>
-                <div className="flex items-center gap-4 text-gray-600 mt-1">
-                  <span>⭐ {stats.rating.toFixed(1)}</span>
-                  <span>•</span>
-                  <span>{stats.total_rides} rides</span>
+              <div className="flex-grow">
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">{formData.name}</h2>
+                <div className="flex items-center gap-4 text-sm">
+                  <div className="flex items-center gap-1">
+                    <span className="text-warning-500 font-semibold">⭐ {stats.rating.toFixed(1)}</span>
+                  </div>
+                  <span className="text-gray-400">•</span>
+                  <span className="text-gray-700 font-medium">{stats.total_rides} trips completed</span>
                   {stats.member_since && (
                     <>
-                      <span>•</span>
-                      <span>Member since {new Date(stats.member_since).getFullYear()}</span>
+                      <span className="text-gray-400">•</span>
+                      <span className="text-gray-600">Member since {new Date(stats.member_since).getFullYear()}</span>
                     </>
                   )}
                 </div>
               </div>
             </div>
+
+            <div className="grid grid-cols-3 gap-4 pt-6 border-t border-gray-200">
+              <div className="text-center bg-info-50 rounded-lg py-3">
+                <div className="text-2xl font-bold text-info-700">{stats.rating.toFixed(1)}</div>
+                <div className="text-xs text-info-600 font-medium">Rating</div>
+              </div>
+              <div className="text-center bg-success-50 rounded-lg py-3">
+                <div className="text-2xl font-bold text-success-700">{stats.total_rides}</div>
+                <div className="text-xs text-success-600 font-medium">Trips</div>
+              </div>
+              <div className="text-center bg-primary-50 rounded-lg py-3">
+                <div className="text-2xl font-bold text-primary-700">✓</div>
+                <div className="text-xs text-primary-600 font-medium">Verified</div>
+              </div>
+            </div>
           </div>
         </Card>
 
-        <Card>
-          <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <Card className="shadow-lift">
+          <div className="border-b border-gray-200 px-8 py-4">
+            <h3 className="text-xl font-bold text-gray-900">Edit Profile</h3>
+            <p className="text-sm text-gray-600 mt-1">Update your personal information</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="p-8 space-y-6">
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-                {error}
+              <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-r flex items-center gap-2">
+                <span className="text-lg">⚠️</span>
+                <span>{error}</span>
               </div>
             )}
 
             {success && (
-              <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
-                {success}
+              <div className="bg-success-50 border-l-4 border-success-500 text-success-700 px-4 py-3 rounded-r flex items-center gap-2">
+                <span className="text-lg">✓</span>
+                <span>{success}</span>
               </div>
             )}
 
@@ -200,21 +227,29 @@ export default function ProfilePage() {
               </p>
             </div>
 
-            <div className="border-t pt-6">
-              <label className="flex items-center gap-3 mb-4">
-                <input
-                  type="checkbox"
-                  checked={formData.is_driver}
-                  onChange={(e) => setFormData({ ...formData, is_driver: e.target.checked })}
-                  className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
-                />
-                <span className="text-sm font-medium text-gray-700">
-                  I want to offer rides as a driver
-                </span>
-              </label>
+            <div className="border-t border-gray-200 pt-6">
+              <div className="bg-gradient-to-r from-primary-50 to-primary-100/50 rounded-lg p-6 mb-4">
+                <label className="flex items-start gap-4 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.is_driver}
+                    onChange={(e) => setFormData({ ...formData, is_driver: e.target.checked })}
+                    className="w-5 h-5 text-primary-600 border-gray-300 rounded focus:ring-primary-500 mt-0.5"
+                  />
+                  <div>
+                    <span className="text-base font-semibold text-gray-900 block">
+                      🚗 I want to offer rides as a driver
+                    </span>
+                    <span className="text-sm text-gray-600">
+                      Share your trips and earn money by offering rides to passengers
+                    </span>
+                  </div>
+                </label>
+              </div>
 
               {formData.is_driver && (
-                <div className="space-y-4 pl-7">
+                <div className="space-y-4 bg-gray-50 rounded-lg p-6">
+                  <h4 className="font-semibold text-gray-900 mb-4">Driver Information</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Input
                       label="Car Model"
