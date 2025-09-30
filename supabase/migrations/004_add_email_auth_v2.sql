@@ -4,60 +4,24 @@
 -- Note: Safe to run multiple times
 
 -- Step 1: Add email column (if doesn't exist)
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.columns
-    WHERE table_name='users' AND column_name='email'
-  ) THEN
-    ALTER TABLE users ADD COLUMN email TEXT;
-    RAISE NOTICE 'Added email column';
-  ELSE
-    RAISE NOTICE 'Email column already exists';
-  END IF;
-END $$;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS email TEXT;
 
 -- Step 2: Add auth_method column (if doesn't exist)
+ALTER TABLE users ADD COLUMN IF NOT EXISTS auth_method TEXT DEFAULT 'email';
 DO $$
 BEGIN
   IF NOT EXISTS (
-    SELECT 1 FROM information_schema.columns
+    SELECT 1 FROM information_schema.constraint_column_usage
     WHERE table_name='users' AND column_name='auth_method'
   ) THEN
-    ALTER TABLE users ADD COLUMN auth_method TEXT DEFAULT 'email'
+    ALTER TABLE users ADD CONSTRAINT users_auth_method_check
       CHECK (auth_method IN ('email', 'phone', 'google', 'apple'));
-    RAISE NOTICE 'Added auth_method column';
-  ELSE
-    RAISE NOTICE 'auth_method column already exists';
   END IF;
 END $$;
 
 -- Step 3: Add auth provider columns (if don't exist)
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.columns
-    WHERE table_name='users' AND column_name='auth_provider_id'
-  ) THEN
-    ALTER TABLE users ADD COLUMN auth_provider_id TEXT;
-    RAISE NOTICE 'Added auth_provider_id column';
-  ELSE
-    RAISE NOTICE 'auth_provider_id column already exists';
-  END IF;
-END $$;
-
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.columns
-    WHERE table_name='users' AND column_name='auth_provider'
-  ) THEN
-    ALTER TABLE users ADD COLUMN auth_provider TEXT;
-    RAISE NOTICE 'Added auth_provider column';
-  ELSE
-    RAISE NOTICE 'auth_provider column already exists';
-  END IF;
-END $$;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS auth_provider_id TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS auth_provider TEXT;
 
 -- Step 4: Update existing users with unique emails (only where email is NULL)
 UPDATE users

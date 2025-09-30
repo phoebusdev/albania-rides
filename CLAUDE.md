@@ -53,33 +53,38 @@ middleware.ts        # Auth checks, security headers, CSP
 
 ### Authentication & Security
 
-- **Phone-only auth**: Uses Twilio SMS verification (no passwords)
-- **Encrypted phone numbers**: Phone numbers are encrypted at rest using AES-256-GCM (see `lib/utils/crypto.ts`)
-- **Middleware**: Protects routes and API endpoints, enforces CSP headers (middleware.ts:5-43)
+- **Email magic link auth**: Uses Supabase email authentication (no passwords, no SMS costs)
+- **Auth flow**: User enters email → receives magic link → clicks to login → auto-creates profile
+- **Middleware**: Protects routes and API endpoints using `supabase.auth.getUser()`, enforces CSP headers (middleware.ts:5-47)
 - **Server vs Client Supabase**:
   - Use `lib/supabase/server.ts` in Server Components and API routes
   - Use `lib/supabase/client.ts` in Client Components
   - Both handle SSR cookie management via `@supabase/ssr`
+- **Legacy**: Phone encryption utilities remain in `lib/utils/crypto.ts` for optional phone contact field
 
 ### Data Model
 
 Key entities:
-- **users** - Phone-authenticated users with encrypted phone numbers
+- **users** - Email-authenticated users (email, name, city, optional phone)
 - **rides** - Posted ride offers with origin, destination, time, seats
 - **bookings** - Ride reservations linking users to rides
 - **messages** - In-app communication between drivers and passengers
 
 Albanian cities are defined in `lib/constants/cities.ts` with coordinates for 15 major cities.
 
+**Note**: Migration 004 adds email auth support. Users can have `auth_method: 'email'` or legacy phone auth.
+
 ### Environment Variables
 
 Required environment variables (see `.env.example`):
 - `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase connection
 - `SUPABASE_SERVICE_KEY` - For server-side admin operations
-- `TWILIO_ACCOUNT_SID` / `TWILIO_AUTH_TOKEN` / `TWILIO_VERIFY_SERVICE_SID` - SMS verification
-- `PHONE_ENCRYPTION_KEY` - 32-byte hex key for encrypting phone numbers (generate with `openssl rand -hex 32`)
-- `WEATHER_API_KEY` - OpenWeatherMap API for weather conditions
-- `NEXT_PUBLIC_APP_URL` - Base URL for the app
+- `NEXT_PUBLIC_APP_URL` - Base URL for the app (needed for auth callback URLs)
+- `WEATHER_API_KEY` - OpenWeatherMap API for weather conditions (optional)
+
+**Legacy** (no longer required for email auth):
+- `TWILIO_*` - SMS verification (replaced by Supabase email auth)
+- `PHONE_ENCRYPTION_KEY` - For encrypting phone numbers (only if adding optional phone field)
 
 ## Development Notes
 
@@ -88,3 +93,5 @@ Required environment variables (see `.env.example`):
 - **Cash-only**: This is a cash-based ridesharing platform (no payment processing)
 - **Albanian market**: UI should support Albanian language (`nameSq` fields) and local conventions
 - **Security headers**: CSP and security headers are enforced in middleware for all routes
+- **Auth callback**: Magic link redirects go through `/auth/callback` which exchanges code for session and creates user profile
+- **Supabase setup**: Email auth provider must be enabled in Supabase dashboard (see `EMAIL_AUTH_SETUP_INSTRUCTIONS.md`)
