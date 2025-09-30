@@ -1,7 +1,9 @@
 {
   "name": "albania-rides",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
+  "description": "Modern ridesharing platform for Albania - Email auth, real-time bookings, messaging",
+  "author": "Claude Code",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
