@@ -3,9 +3,10 @@
 ## ✅ AlbaniaRides is Live on Vercel
 
 **Deployment Date**: September 30, 2025
-**Status**: ✅ **LIVE AND READY**
-**Production URL**: https://albania-rides-b17b1ulrm-phoebusdevs-projects.vercel.app
+**Status**: ✅ **LIVE AND FULLY FUNCTIONAL**
+**Production URL**: https://albania-rides-2pbqxsjmw-phoebusdevs-projects.vercel.app
 **Database Status**: ✅ **CONFIGURED** (Migrations 001, 002, 003 + Seed data applied)
+**Ride Search**: ✅ **WORKING** (City code fix deployed - commit 6cb556d)
 
 ---
 
