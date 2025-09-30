@@ -79,7 +79,7 @@ export default function HomePage() {
                   >
                     <option value="">Select city</option>
                     {ALBANIAN_CITIES.map((city) => (
-                      <option key={city.code} value={city.name}>
+                      <option key={city.code} value={city.code}>
                         {city.name}
                       </option>
                     ))}
@@ -98,7 +98,7 @@ export default function HomePage() {
                   >
                     <option value="">Select city</option>
                     {ALBANIAN_CITIES.map((city) => (
-                      <option key={city.code} value={city.name}>
+                      <option key={city.code} value={city.code}>
                         {city.name}
                       </option>
                     ))}
@@ -139,7 +139,7 @@ export default function HomePage() {
                 className="card hover:shadow-md transition-shadow text-left"
               >
                 <div className="font-semibold">
-                  {route.from} → {route.to}
+                  {route.fromName} → {route.toName}
                 </div>
                 <div className="text-sm text-gray-600">
                   {route.distance} km • ~{route.duration} min

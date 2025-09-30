@@ -27,11 +27,11 @@ export const ALBANIAN_CITIES: City[] = [
 export const CITY_NAMES = ALBANIAN_CITIES.map(c => c.name)
 
 export const POPULAR_ROUTES = [
-  { from: 'Tirana', to: 'Durrës', distance: 39, duration: 40 },
-  { from: 'Tirana', to: 'Vlorë', distance: 147, duration: 150 },
-  { from: 'Tirana', to: 'Shkodër', distance: 116, duration: 120 },
-  { from: 'Tirana', to: 'Elbasan', distance: 45, duration: 50 },
-  { from: 'Durrës', to: 'Vlorë', distance: 118, duration: 120 },
+  { from: 'TIA', to: 'DUR', fromName: 'Tirana', toName: 'Durrës', distance: 39, duration: 40 },
+  { from: 'TIA', to: 'VLO', fromName: 'Tirana', toName: 'Vlorë', distance: 147, duration: 150 },
+  { from: 'TIA', to: 'SHK', fromName: 'Tirana', toName: 'Shkodër', distance: 116, duration: 120 },
+  { from: 'TIA', to: 'ELB', fromName: 'Tirana', toName: 'Elbasan', distance: 45, duration: 50 },
+  { from: 'DUR', to: 'VLO', fromName: 'Durrës', toName: 'Vlorë', distance: 118, duration: 120 },
 ]
 
 export const TIME_PERIODS = [

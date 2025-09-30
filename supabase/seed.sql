@@ -67,12 +67,12 @@ CREATE INDEX idx_ride_search_departure ON ride_search(departure_time);
 -- Test users for development (phone numbers are encrypted with test key)
 -- Note: In production, you'll need to register users through the app
 -- These are example entries using placeholder encrypted values
-INSERT INTO users (id, phone_number_encrypted, phone_hash, name, city, is_driver, car_model, car_color, car_plate, rating, total_rides, created_at) VALUES
-('550e8400-e29b-41d4-a716-446655440001', 'encrypted_phone_1', 'hash_355691234567', 'Alban Berisha', 'TIA', true, 'Mercedes-Benz E-Class', 'Silver', 'TR 1234 AB', 4.8, 127, NOW() - INTERVAL '6 months'),
-('550e8400-e29b-41d4-a716-446655440002', 'encrypted_phone_2', 'hash_355691234568', 'Erjon Hoxha', 'DUR', true, 'BMW 5 Series', 'Black', 'DR 5678 CD', 4.9, 203, NOW() - INTERVAL '1 year'),
-('550e8400-e29b-41d4-a716-446655440003', 'encrypted_phone_3', 'hash_355691234569', 'Mirela Krasniqi', 'VLO', true, 'Audi A6', 'White', 'VL 9012 EF', 4.7, 89, NOW() - INTERVAL '4 months'),
-('550e8400-e29b-41d4-a716-446655440004', 'encrypted_phone_4', 'hash_355691234570', 'Fjola Dervishi', 'SHK', true, 'Toyota Camry', 'Blue', 'SH 3456 GH', 5.0, 156, NOW() - INTERVAL '8 months'),
-('550e8400-e29b-41d4-a716-446655440005', 'encrypted_phone_5', 'hash_355691234571', 'Klodian Gjoka', 'TIA', true, 'Volkswagen Passat', 'Grey', 'TR 7890 IJ', 4.6, 74, NOW() - INTERVAL '3 months');
+INSERT INTO users (id, phone_number_encrypted, phone_hash, name, city, is_driver, car_model, car_color, rating, total_rides, created_at) VALUES
+('550e8400-e29b-41d4-a716-446655440001', 'encrypted_phone_1', 'hash_355691234567', 'Alban Berisha', 'TIA', true, 'Mercedes-Benz E-Class', 'Silver', 4.8, 127, NOW() - INTERVAL '6 months'),
+('550e8400-e29b-41d4-a716-446655440002', 'encrypted_phone_2', 'hash_355691234568', 'Erjon Hoxha', 'DUR', true, 'BMW 5 Series', 'Black', 4.9, 203, NOW() - INTERVAL '1 year'),
+('550e8400-e29b-41d4-a716-446655440003', 'encrypted_phone_3', 'hash_355691234569', 'Mirela Krasniqi', 'VLO', true, 'Audi A6', 'White', 4.7, 89, NOW() - INTERVAL '4 months'),
+('550e8400-e29b-41d4-a716-446655440004', 'encrypted_phone_4', 'hash_355691234570', 'Fjola Dervishi', 'SHK', true, 'Toyota Camry', 'Blue', 5.0, 156, NOW() - INTERVAL '8 months'),
+('550e8400-e29b-41d4-a716-446655440005', 'encrypted_phone_5', 'hash_355691234571', 'Klodian Gjoka', 'TIA', true, 'Volkswagen Passat', 'Grey', 4.6, 74, NOW() - INTERVAL '3 months');
 
 -- Test rides for development
 -- Create rides for popular routes starting from tomorrow

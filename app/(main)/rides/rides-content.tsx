@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { formatCurrency } from '@/lib/utils/validation'
+import { ALBANIAN_CITIES } from '@/lib/constants/cities'
 
 interface Ride {
   id: string
@@ -75,6 +76,11 @@ export default function RidesContent() {
     })
   }
 
+  const getCityName = (code: string) => {
+    const city = ALBANIAN_CITIES.find(c => c.code === code)
+    return city?.name || code
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm">
@@ -86,7 +92,7 @@ export default function RidesContent() {
       <main className="max-w-4xl mx-auto px-4 py-8">
         <div className="mb-6">
           <h1 className="text-2xl font-bold">
-            {origin} → {destination}
+            {getCityName(origin)} → {getCityName(destination)}
           </h1>
           {date && (
             <p className="text-gray-600">
