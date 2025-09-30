@@ -38,9 +38,10 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    const ride = Array.isArray(booking.ride) ? booking.ride[0] : booking.ride
     const isAuthorized =
       booking.passenger_id === userId ||
-      booking.ride.driver_id === userId
+      ride?.driver_id === userId
 
     if (!isAuthorized) {
       return NextResponse.json(
@@ -121,8 +122,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const ride = Array.isArray(booking.ride) ? booking.ride[0] : booking.ride
     const isPassenger = booking.passenger_id === userId
-    const isDriver = booking.ride.driver_id === userId
+    const isDriver = ride?.driver_id === userId
 
     if (!isPassenger && !isDriver) {
       return NextResponse.json(
@@ -132,7 +134,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Determine receiver
-    const receiver_id = isPassenger ? booking.ride.driver_id : booking.passenger_id
+    const receiver_id = isPassenger ? ride?.driver_id : booking.passenger_id
 
     // Create message
     const { data: message, error } = await supabase
