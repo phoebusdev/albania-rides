@@ -27,7 +27,7 @@ CREATE INDEX idx_messages_sender_id ON messages(sender_id);
 CREATE INDEX idx_messages_created_at ON messages(created_at DESC);
 
 -- Ratings table indexes
-CREATE INDEX idx_ratings_rated_user_id ON ratings(rated_user_id);
+CREATE INDEX idx_ratings_rated_id ON ratings(rated_id);
 CREATE INDEX idx_ratings_rater_id ON ratings(rater_id);
 CREATE INDEX idx_ratings_ride_id ON ratings(ride_id);
 CREATE UNIQUE INDEX idx_ratings_unique_per_ride ON ratings(ride_id, rater_id);
