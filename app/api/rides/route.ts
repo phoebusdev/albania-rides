@@ -73,7 +73,20 @@ export async function GET(request: NextRequest) {
     if (error) {
       console.error('Failed to fetch rides:', error)
       return NextResponse.json(
-        { error: 'Failed to fetch rides' },
+        {
+          error: 'Failed to fetch rides',
+          details: error.message,
+          code: error.code,
+          hint: error.hint,
+          debug: {
+            origin,
+            destination,
+            date,
+            timePeriod,
+            hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+            hasSupabaseKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+          }
+        },
         { status: 500 }
       )
     }
@@ -98,7 +111,11 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Search error:', error)
     return NextResponse.json(
-      { error: 'Search failed' },
+      {
+        error: 'Search failed',
+        details: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined
+      },
       { status: 500 }
     )
   }
@@ -174,7 +191,12 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error('Failed to create ride:', error)
       return NextResponse.json(
-        { error: 'Failed to create ride' },
+        {
+          error: 'Failed to create ride',
+          details: error.message,
+          code: error.code,
+          hint: error.hint
+        },
         { status: 500 }
       )
     }
@@ -183,7 +205,10 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Create ride error:', error)
     return NextResponse.json(
-      { error: 'Failed to create ride' },
+      {
+        error: 'Failed to create ride',
+        details: error instanceof Error ? error.message : String(error)
+      },
       { status: 500 }
     )
   }

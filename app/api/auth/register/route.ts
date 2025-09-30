@@ -53,7 +53,12 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error('Failed to create user:', error)
       return NextResponse.json(
-        { error: 'Failed to create account' },
+        {
+          error: 'Failed to create account',
+          details: error.message,
+          code: error.code,
+          hint: error.hint
+        },
         { status: 500 }
       )
     }
@@ -71,7 +76,15 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Registration error:', error)
     return NextResponse.json(
-      { error: 'Registration failed' },
+      {
+        error: 'Registration failed',
+        details: error instanceof Error ? error.message : String(error),
+        debug: {
+          hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+          hasSupabaseKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+          hasEncryptionKey: !!process.env.PHONE_ENCRYPTION_KEY
+        }
+      },
       { status: 500 }
     )
   }
