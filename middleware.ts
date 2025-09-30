@@ -7,7 +7,7 @@ export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
   // Public routes that don't require auth
-  const publicRoutes = ['/', '/login', '/register', '/verify', '/api/auth/register', '/api/auth/verify', '/api/auth/login', '/api/rides']
+  const publicRoutes = ['/', '/login', '/register', '/api/auth/email-login', '/api/rides', '/auth/callback']
   const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route))
 
   // API routes that require auth
@@ -18,10 +18,18 @@ export async function middleware(request: NextRequest) {
   const protectedPages = ['/trips', '/profile', '/rides/new']
   const isProtectedPage = protectedPages.some(route => pathname.startsWith(route))
 
-  if (isProtectedApiRoute) {
-    const authHeader = request.headers.get('authorization')
-    if (!authHeader?.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  // Check authentication for protected routes using Supabase session
+  if (isProtectedApiRoute || isProtectedPage) {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+      if (isProtectedApiRoute) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      } else {
+        // Redirect to login for protected pages
+        return NextResponse.redirect(new URL('/login', request.url))
+      }
     }
   }
 

@@ -7,12 +7,13 @@ import { ALBANIAN_CITIES } from '@/lib/constants/cities'
 export default function RegisterPage() {
   const router = useRouter()
   const [formData, setFormData] = useState({
-    phone: '',
+    email: '',
     name: '',
     city: ''
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -20,7 +21,7 @@ export default function RegisterPage() {
     setError('')
 
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch('/api/auth/email-login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -32,9 +33,8 @@ export default function RegisterPage() {
         throw new Error(data.error || 'Registration failed')
       }
 
-      // Store phone for verification page
-      sessionStorage.setItem('pendingPhone', formData.phone)
-      router.push('/verify')
+      // Show success message
+      setSuccess(true)
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -42,20 +42,43 @@ export default function RegisterPage() {
     }
   }
 
-  const formatPhone = (value: string) => {
-    // Remove non-digits
-    let phone = value.replace(/\D/g, '')
+  if (success) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="max-w-md w-full">
+          <div className="card text-center">
+            <div className="mb-6">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">✉️</span>
+              </div>
+              <h1 className="text-2xl font-bold mb-2">Check Your Email</h1>
+              <p className="text-gray-600">
+                We sent a magic link to <strong>{formData.email}</strong>
+              </p>
+            </div>
 
-    // Add +355 if not present
-    if (!phone.startsWith('355')) {
-      if (phone.startsWith('0')) {
-        phone = '355' + phone.substring(1)
-      } else if (phone.length > 0) {
-        phone = '355' + phone
-      }
-    }
+            <div className="bg-blue-50 p-4 rounded-lg text-sm text-left mb-6">
+              <p className="font-semibold mb-2">Next steps:</p>
+              <ol className="list-decimal list-inside space-y-1 text-gray-700">
+                <li>Open your email inbox</li>
+                <li>Click the magic link in the email</li>
+                <li>You'll be automatically logged in</li>
+              </ol>
+            </div>
 
-    return phone ? '+' + phone : ''
+            <p className="text-sm text-gray-500">
+              Didn't receive the email? Check your spam folder or{' '}
+              <button
+                onClick={() => setSuccess(false)}
+                className="text-primary-600 hover:underline"
+              >
+                try again
+              </button>
+            </p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -72,21 +95,21 @@ export default function RegisterPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Phone Number
+                Email Address
               </label>
               <input
-                type="tel"
-                value={formData.phone}
+                type="email"
+                value={formData.email}
                 onChange={(e) => setFormData({
                   ...formData,
-                  phone: formatPhone(e.target.value)
+                  email: e.target.value
                 })}
-                placeholder="+355 6x xxx xxxx"
+                placeholder="your@email.com"
                 className="input"
                 required
               />
               <p className="text-xs text-gray-500 mt-1">
-                Albanian numbers only (+355)
+                We'll send you a magic link to login
               </p>
             </div>
 
@@ -117,7 +140,7 @@ export default function RegisterPage() {
               >
                 <option value="">Select your city</option>
                 {ALBANIAN_CITIES.map((city) => (
-                  <option key={city.code} value={city.name}>
+                  <option key={city.code} value={city.code}>
                     {city.name}
                   </option>
                 ))}
