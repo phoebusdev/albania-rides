@@ -63,3 +63,49 @@ WHERE r.status = 'active'
 -- Create indexes for the materialized view
 CREATE INDEX idx_ride_search_route ON ride_search(origin_city, destination_city, departure_time);
 CREATE INDEX idx_ride_search_departure ON ride_search(departure_time);
+
+-- Test users for development (phone numbers are encrypted with test key)
+-- Note: In production, you'll need to register users through the app
+-- These are example entries using placeholder encrypted values
+INSERT INTO users (id, phone_number_encrypted, phone_hash, name, city, is_driver, car_model, car_color, car_plate, rating, total_rides, created_at) VALUES
+('550e8400-e29b-41d4-a716-446655440001', 'encrypted_phone_1', 'hash_355691234567', 'Alban Berisha', 'TIA', true, 'Mercedes-Benz E-Class', 'Silver', 'TR 1234 AB', 4.8, 127, NOW() - INTERVAL '6 months'),
+('550e8400-e29b-41d4-a716-446655440002', 'encrypted_phone_2', 'hash_355691234568', 'Erjon Hoxha', 'DUR', true, 'BMW 5 Series', 'Black', 'DR 5678 CD', 4.9, 203, NOW() - INTERVAL '1 year'),
+('550e8400-e29b-41d4-a716-446655440003', 'encrypted_phone_3', 'hash_355691234569', 'Mirela Krasniqi', 'VLO', true, 'Audi A6', 'White', 'VL 9012 EF', 4.7, 89, NOW() - INTERVAL '4 months'),
+('550e8400-e29b-41d4-a716-446655440004', 'encrypted_phone_4', 'hash_355691234570', 'Fjola Dervishi', 'SHK', true, 'Toyota Camry', 'Blue', 'SH 3456 GH', 5.0, 156, NOW() - INTERVAL '8 months'),
+('550e8400-e29b-41d4-a716-446655440005', 'encrypted_phone_5', 'hash_355691234571', 'Klodian Gjoka', 'TIA', true, 'Volkswagen Passat', 'Grey', 'TR 7890 IJ', 4.6, 74, NOW() - INTERVAL '3 months');
+
+-- Test rides for development
+-- Create rides for popular routes starting from tomorrow
+INSERT INTO rides (id, driver_id, origin_city, destination_city, departure_time, pickup_point, seats_total, seats_available, price_per_seat, luggage_space, smoking_allowed, is_recurring, status, created_at) VALUES
+-- Tirana to Durrës (tomorrow morning)
+('650e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440001', 'TIA', 'DUR', (CURRENT_DATE + INTERVAL '1 day') + TIME '08:00:00', 'Skanderbeg Square', 3, 3, 500, true, false, false, 'active', NOW()),
+('650e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440005', 'TIA', 'DUR', (CURRENT_DATE + INTERVAL '1 day') + TIME '14:30:00', 'TEG Shopping Center', 4, 2, 450, true, false, false, 'active', NOW()),
+
+-- Durrës to Tirana (tomorrow afternoon)
+('650e8400-e29b-41d4-a716-446655440003', '550e8400-e29b-41d4-a716-446655440002', 'DUR', 'TIA', (CURRENT_DATE + INTERVAL '1 day') + TIME '16:00:00', 'Port of Durrës', 3, 3, 500, false, false, false, 'active', NOW()),
+
+-- Tirana to Vlorë (tomorrow morning)
+('650e8400-e29b-41d4-a716-446655440004', '550e8400-e29b-41d4-a716-446655440001', 'TIA', 'VLO', (CURRENT_DATE + INTERVAL '1 day') + TIME '09:00:00', 'South Bus Terminal', 3, 1, 1500, true, false, false, 'active', NOW()),
+('650e8400-e29b-41d4-a716-446655440005', '550e8400-e29b-41d4-a716-446655440005', 'TIA', 'VLO', (CURRENT_DATE + INTERVAL '1 day') + TIME '15:00:00', 'Skanderbeg Square', 4, 4, 1400, true, true, false, 'active', NOW()),
+
+-- Vlorë to Tirana (day after tomorrow)
+('650e8400-e29b-41d4-a716-446655440006', '550e8400-e29b-41d4-a716-446655440003', 'VLO', 'TIA', (CURRENT_DATE + INTERVAL '2 days') + TIME '10:00:00', 'Independence Square', 3, 3, 1500, true, false, false, 'active', NOW()),
+
+-- Tirana to Shkodër (tomorrow morning)
+('650e8400-e29b-41d4-a716-446655440007', '550e8400-e29b-41d4-a716-446655440004', 'TIA', 'SHK', (CURRENT_DATE + INTERVAL '1 day') + TIME '07:30:00', 'North Terminal', 4, 4, 1000, true, false, false, 'active', NOW()),
+('650e8400-e29b-41d4-a716-446655440008', '550e8400-e29b-41d4-a716-446655440001', 'TIA', 'SHK', (CURRENT_DATE + INTERVAL '1 day') + TIME '17:00:00', 'Kamza Junction', 3, 2, 1100, false, false, false, 'active', NOW()),
+
+-- Shkodër to Tirana (tomorrow afternoon)
+('650e8400-e29b-41d4-a716-446655440009', '550e8400-e29b-41d4-a716-446655440004', 'SHK', 'TIA', (CURRENT_DATE + INTERVAL '1 day') + TIME '15:30:00', 'Rozafa Castle Area', 4, 3, 1000, true, false, false, 'active', NOW()),
+
+-- Tirana to Elbasan (tomorrow)
+('650e8400-e29b-41d4-a716-446655440010', '550e8400-e29b-41d4-a716-446655440005', 'TIA', 'ELB', (CURRENT_DATE + INTERVAL '1 day') + TIME '11:00:00', 'East Terminal', 4, 4, 600, true, false, false, 'active', NOW()),
+
+-- Durrës to Vlorë (day after tomorrow)
+('650e8400-e29b-41d4-a716-446655440011', '550e8400-e29b-41d4-a716-446655440002', 'DUR', 'VLO', (CURRENT_DATE + INTERVAL '2 days') + TIME '09:30:00', 'Beach Road', 3, 3, 1200, true, false, false, 'active', NOW()),
+
+-- Tirana to Korçë (day after tomorrow)
+('650e8400-e29b-41d4-a716-446655440012', '550e8400-e29b-41d4-a716-446655440001', 'TIA', 'KOR', (CURRENT_DATE + INTERVAL '2 days') + TIME '08:00:00', 'Skanderbeg Square', 3, 3, 1800, true, false, false, 'active', NOW());
+
+-- Refresh the materialized view
+REFRESH MATERIALIZED VIEW ride_search;
